@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Tactics{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('tactic.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for tactic in tactics %}
+    <article class="tactic">
+      <header>
+        <div>
+          <h1>{{ tactic['name'] }}</h1>
+          <div class="about">Tactic stage: {{ tactic['tactic_id'] }}</div>
+        </div>
+        <a class="action" href="{{ url_for('tactic.update', id=tactic['id']) }}">Edit</a>
+      </header>
+      <p class="summary">{{ tactic['summary'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+

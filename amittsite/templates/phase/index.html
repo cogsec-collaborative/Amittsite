@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Phases{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('phase.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for phase in phases %}
+    <article class="phase">
+      <header>
+        <div>
+          <h1>{{ phase['name'] }}</h1>
+          <div class="about">Rank: {{ phase['rank'] }}</div>
+        </div>
+        <a class="action" href="{{ url_for('phase.update', id=phase['id']) }}">Edit</a>
+      </header>
+      <p class="summary">{{ phase['summary'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+
