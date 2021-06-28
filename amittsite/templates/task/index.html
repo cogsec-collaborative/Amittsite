@@ -13,10 +13,9 @@
       <header>
         <div>
           <h1>{{ task['amitt_id'] }} {{ task['name'] }}</h1>
-          <div class="tactic">Tactic stage: {{ task['tactic_id'] }}</div>, 
-          <div class="tactic">Framework: {{ task['framework_id'] }}</div> 
         </div>
       </header>
+      <p class="belongsto">Framework: {{ task['framework_id'] }}, Tactic stage: {{ task['tactic_id'] }}</p>
       <p class="summary">Summary: {{ task['summary'] }} - <a class="action" href="{{ url_for('task.view', id=task['id']) }}">Details</a></p>
     </article>
     {% if not loop.last %}

@@ -1,28 +1,28 @@
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS phase;
-DROP TABLE IF EXISTS tactic;
-DROP TABLE IF EXISTS framework;
-DROP TABLE IF EXISTS task;
-DROP TABLE IF EXISTS technique;
-DROP TABLE IF EXISTS counter;
-DROP TABLE IF EXISTS sector;
-DROP TABLE IF EXISTS metatechnique;
-DROP TABLE IF EXISTS reference;
-DROP TABLE IF EXISTS dataset;
-DROP TABLE IF EXISTS actor_type;
-DROP TABLE IF EXISTS incident;
-DROP TABLE IF EXISTS response_type;
-DROP TABLE IF EXISTS playbook;
-DROP TABLE IF EXISTS techniques_counters;
+-- DROP TABLE IF EXISTS user;
+-- DROP TABLE IF EXISTS phase;
+-- DROP TABLE IF EXISTS tactic;
+-- DROP TABLE IF EXISTS framework;
+-- DROP TABLE IF EXISTS task;
+-- DROP TABLE IF EXISTS technique;
+-- DROP TABLE IF EXISTS counter;
+-- DROP TABLE IF EXISTS sector;
+-- DROP TABLE IF EXISTS metatechnique;
+-- DROP TABLE IF EXISTS reference;
+-- DROP TABLE IF EXISTS dataset;
+-- DROP TABLE IF EXISTS actor_type;
+-- DROP TABLE IF EXISTS incident;
+-- DROP TABLE IF EXISTS response_type;
+-- DROP TABLE IF EXISTS playbook;
+-- DROP TABLE IF EXISTS techniques_counters;
 
 
-CREATE TABLE user (
+CREATE TABLE IF NOT EXISTS user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL
 );
 
-CREATE TABLE phase (
+CREATE TABLE IF NOT EXISTS phase (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   rank INTEGER NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE phase (
   summary TEXT NOT NULL
 );
 
-CREATE TABLE tactic (
+CREATE TABLE IF NOT EXISTS tactic (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   phase_id TEXT NOT NULL,
@@ -40,14 +40,14 @@ CREATE TABLE tactic (
   FOREIGN KEY (phase_id) REFERENCES phase (amitt_id)
 );
 
-CREATE TABLE framework (
+CREATE TABLE IF NOT EXISTS framework (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   name TEXT NOT NULL,
   summary TEXT NOT NULL
 );
 
-CREATE TABLE task (
+CREATE TABLE IF NOT EXISTS task (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   tactic_id TEXT NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE task (
   FOREIGN KEY (framework_id) REFERENCES framework (amitt_id)
 );
 
-CREATE TABLE technique (
+CREATE TABLE IF NOT EXISTS technique (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   tactic_id TEXT NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE technique (
   FOREIGN KEY (tactic_id) REFERENCES tactic (amitt_id)
 );
 
-CREATE TABLE counter (
+CREATE TABLE IF NOT EXISTS counter (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   metatechnique_id TEXT NOT NULL,
@@ -78,35 +78,35 @@ CREATE TABLE counter (
   FOREIGN KEY (tactic_id) REFERENCES tactic (amitt_id)
 );
 
-/* CREATE TABLE sector (
+/* CREATE TABLE IF NOT EXISTS sector (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   name TEXT NOT NULL,
   summary TEXT NOT NULL
 ); */
 
-CREATE TABLE metatechnique (
+CREATE TABLE IF NOT EXISTS metatechnique (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   name TEXT NOT NULL,
   summary TEXT NOT NULL
 );
 
-/* CREATE TABLE reference (
+/* CREATE TABLE IF NOT EXISTS reference (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   name TEXT NOT NULL,
   summary TEXT NOT NULL
 );
 
-CREATE TABLE dataset (
+CREATE TABLE IF NOT EXISTS dataset (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   name TEXT NOT NULL,
   summary TEXT NOT NULL
 );
 
-CREATE TABLE actor_type (
+CREATE TABLE IF NOT EXISTS actor_type (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   sector_id TEXT NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE actor_type (
   FOREIGN KEY (framework_id) REFERENCES framework (amitt_id)
 );
 
-CREATE TABLE incident (
+CREATE TABLE IF NOT EXISTS incident (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   name TEXT NOT NULL,
@@ -128,21 +128,22 @@ CREATE TABLE incident (
   found_via TEXT NOT NULL
 );
 
-CREATE TABLE response_type (
+CREATE TABLE IF NOT EXISTS response_type (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,
   name TEXT NOT NULL,
   summary TEXT NOT NULL
 );
 
-CREATE TABLE playbook (
+CREATE TABLE IF NOT EXISTS playbook (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   object_type TEXT NOT NULL,
   object_id TEXT NOT NULL,
   summary TEXT NOT NULL
 );
+*/
 
-CREATE TABLE techniques_counters (
+CREATE TABLE IF NOT EXISTS technique_counter (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   technique_id TEXT NOT NULL,
   counter_id TEXT NOT NULL,
@@ -150,7 +151,7 @@ CREATE TABLE techniques_counters (
   FOREIGN KEY (technique_id) REFERENCES technique (amitt_id),
   FOREIGN KEY (counter_id) REFERENCES counter (amitt_id)
 );
-*/
+
 
 
 

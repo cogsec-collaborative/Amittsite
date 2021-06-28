@@ -12,12 +12,11 @@
     <article class="tactic">
       <header>
         <div>
-          <h1>{{ tactic['name'] }}</h1>
-          <div class="about">Tactic stage: {{ tactic['tactic_id'] }}</div>
+          <h1>{{ tactic['amitt_id'] }} {{ tactic['name'] }}</h1>
+          <div class="about">Phase: {{ tactic['phase_id'] }}</div>
         </div>
-        <a class="action" href="{{ url_for('tactic.update', id=tactic['id']) }}">Edit</a>
       </header>
-      <p class="summary">{{ tactic['summary'] }}</p>
+      <p class="summary">{{ tactic['summary'] }} -  <a class="action" href="{{ url_for('tactic.update', id=tactic['id']) }}">Edit</a></p>
     </article>
     {% if not loop.last %}
       <hr>
