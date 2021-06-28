@@ -143,15 +143,25 @@ CREATE TABLE IF NOT EXISTS playbook (
 );
 */
 
-CREATE TABLE IF NOT EXISTS technique_counter (
+CREATE TABLE IF NOT EXISTS counter_tactic (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  technique_id TEXT NOT NULL,
   counter_id TEXT NOT NULL,
+  tactic_id TEXT NOT NULL,
+  main_tactic TEXT NOT NULL,
   summary TEXT NOT NULL,
-  FOREIGN KEY (technique_id) REFERENCES technique (amitt_id),
-  FOREIGN KEY (counter_id) REFERENCES counter (amitt_id)
+  FOREIGN KEY (counter_id) REFERENCES counter (amitt_id),
+  FOREIGN KEY (tactic_id) REFERENCES tactic (amitt_id)
 );
 
+
+CREATE TABLE IF NOT EXISTS counter_technique (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  counter_id TEXT NOT NULL,
+  technique_id TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  FOREIGN KEY (counter_id) REFERENCES counter (amitt_id),
+  FOREIGN KEY (technique_id) REFERENCES technique (amitt_id)
+);
 
 
 

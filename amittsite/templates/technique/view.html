@@ -8,6 +8,12 @@
 
 <p class="tactic">Tactic stage: {{ technique['tactic_id'] }}</p>
 <p class="summary">Summary: {{ technique['summary'] }}</p>
+<p class="counters">Has counters: 
+    {% for counter in counters %}
+      <div class="counter"><a class="action" href="{{ url_for('counter.view', id=counter['id']) }}">{{ counter['counter_id'] }} {{ counter['name'] }}</a></div>
+  {% endfor %}
+</p>
+
 <p class="actions"><a class="action" href="{{ url_for('technique.update', id=technique['id']) }}">Edit</a></p>
 {% endblock %}
 

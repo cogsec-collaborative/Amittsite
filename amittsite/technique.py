@@ -9,7 +9,8 @@ from amittsite.db import get_db
 bp = Blueprint('technique', __name__, url_prefix='/technique')
 
 def get_technique(id, check_author=True):
-    technique = get_db().execute(
+    db = get_db()
+    technique = db.execute(
         'SELECT p.id, p.amitt_id, p.name, p.summary, p.tactic_id'
         ' FROM technique p JOIN tactic u ON p.tactic_id = u.amitt_id'
         ' WHERE p.id = ?',
@@ -19,7 +20,15 @@ def get_technique(id, check_author=True):
     if technique is None:
         abort(404, f"Technique id {id} doesn't exist.")
 
-    return technique
+    counters = db.execute(
+        'SELECT p.counter_id, p.technique_id, p.summary, c.name, c.id'
+        ' FROM counter_technique p JOIN counter c ON p.counter_id = c.amitt_id'
+        ' WHERE p.technique_id = ?'
+        ' ORDER BY p.counter_id ASC',
+        (technique['amitt_id'],)
+    ).fetchall()
+
+    return (technique, counters)
 
 @bp.route('/')
 def index():
@@ -34,8 +43,8 @@ def index():
 
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))
 def view(id):
-    technique = get_technique(id)
-    return render_template('technique/view.html', technique=technique)
+    technique, counters = get_technique(id)
+    return render_template('technique/view.html', technique=technique, counters=counters)
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -69,7 +78,7 @@ def create():
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
-    technique = get_technique(id)
+    technique, counters = get_technique(id)
 
     if request.method == 'POST':
         title = request.form['name']
