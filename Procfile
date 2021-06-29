@@ -1,1 +1,1 @@
-web: gunicorn amittsite:app
+web: gunicorn wsgi:app
