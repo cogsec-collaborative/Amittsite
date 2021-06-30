@@ -78,6 +78,15 @@ CREATE TABLE IF NOT EXISTS counter (
   FOREIGN KEY (tactic_id) REFERENCES tactic (amitt_id)
 );
 
+CREATE TABLE IF NOT EXISTS detection (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  amitt_id TEXT NOT NULL,
+  tactic_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  FOREIGN KEY (tactic_id) REFERENCES tactic (amitt_id)
+);
+
 /* CREATE TABLE IF NOT EXISTS sector (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   amitt_id TEXT NOT NULL,

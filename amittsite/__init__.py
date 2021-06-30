@@ -5,6 +5,7 @@ from flask import render_template
 from . import db
 from . import auth
 from . import counter
+from . import detection
 from . import framework
 from . import metatechnique
 from . import phase
@@ -49,6 +50,7 @@ def create_app(test_config=None):
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(counter.bp)
+    app.register_blueprint(detection.bp)
     app.register_blueprint(framework.bp)
     app.register_blueprint(metatechnique.bp)
     app.register_blueprint(phase.bp)
