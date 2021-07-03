@@ -6,7 +6,7 @@ import os
 
 #engine = create_engine('sqlite:////Users/sara/Dropbox/SJT_Projects_current/AMITT/CODE_AND_DATA/github_cogseccollab_amittsite/instance/amittsite.sqlite')
 #engine = create_engine('postgresql://sara:@localhost:5432/amittsite')
-engine = create_engine(os.environ['DATABASE_URL'])
+engine = create_engine(os.environ['DATABASE_URL2'])
 
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,

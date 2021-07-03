@@ -31,7 +31,7 @@ def create_app(test_config=None):
     # )
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY') or 'dev',
-        SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL'],
+        SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL2'],
     )
     print('{}'.format(app.config))
 
