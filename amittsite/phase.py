@@ -4,18 +4,22 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from amittsite.auth import login_required
-from amittsite.db import get_db
+from amittsite.database import db_session
+from amittsite.models import Phase
+
 
 bp = Blueprint('phase', __name__, url_prefix='/phase')
 
+def get_phase(id, check_author=True):
+    phase = Phase.query.filter(Phase.id == id).first()
+    if phase is None:
+        abort(404, f"Phase id {id} doesn't exist.")
+    return phase
+
+
 @bp.route('/')
 def index():
-    db = get_db()
-    phases = db.execute(
-        'SELECT p.id, amitt_id, rank, name, summary'
-        ' FROM phase p'
-        ' ORDER BY amitt_id ASC'
-    ).fetchall()
+    phases = Phase.query.all() #.order_by("amitt_id")
     return render_template('phase/index.html', phases=phases)
 
 
@@ -35,30 +39,13 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO phase (amitt_id, name, summary, rank)'
-                ' VALUES (?, ?, ?, ?)',
-                (amitt_id, name, summary, rank)
-            )
-            db.commit()
+            phase = Phase(amitt_id, rank, name, summary)
+            db_session.add(phase)
+            db_session.commit()
             return redirect(url_for('phase.index'))
 
     return render_template('phase/create.html')
 
-
-def get_phase(id, check_author=True):
-    phase = get_db().execute(
-        'SELECT p.id, amitt_id, name, summary, rank'
-        ' FROM phase p'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchone()
-
-    if phase is None:
-        abort(404, f"Phase id {id} doesn't exist.")
-
-    return phase
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
@@ -76,13 +63,10 @@ def update(id):
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'UPDATE phase SET name = ?, summary = ?'
-                ' WHERE id = ?',
-                (title, body, id)
-            )
-            db.commit()
+            phase.name = name
+            phase.summary = summary
+            db_session.add(phase)
+            db_session.commit()            
             return redirect(url_for('phase.index'))
 
     return render_template('phase/update.html', phase=phase)
@@ -91,9 +75,8 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    get_phase(id)
-    db = get_db()
-    db.execute('DELETE FROM phase WHERE id = ?', (id,))
-    db.commit()
+    phase = get_phase(id)
+    db_session.delete(phase)
+    db_session.commit()            
     return redirect(url_for('phase.index'))
 

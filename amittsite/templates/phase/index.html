@@ -12,10 +12,10 @@
     <article class="phase">
       <header>
         <div>
-          <h1>{{ phase['amitt_id'] }} {{ phase['name'] }}</h1>
+          <h1>{{ phase.amitt_id }} {{ phase.name }}</h1>
         </div>
       </header>
-      <p class="summary">Summary: {{ phase['summary'] }} - <a class="action" href="{{ url_for('phase.update', id=phase['id']) }}">Edit</a></p>
+      <p class="summary">Summary: {{ phase.summary }} - <a class="action" href="{{ url_for('phase.update', id=phase.id) }}">Edit</a></p>
     </article>
     {% if not loop.last %}
       <hr>

@@ -4,18 +4,22 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from amittsite.auth import login_required
-from amittsite.db import get_db
+from amittsite.database import db_session
+from amittsite.models import Framework
+
 
 bp = Blueprint('framework', __name__, url_prefix='/framework')
 
+def get_framework(id, check_author=True):
+    framework = Framework.query.filter(Framework.id == id).first()
+    if framework is None:
+        abort(404, f"Framework id {id} doesn't exist.")
+    return framework
+
+
 @bp.route('/')
 def index():
-    db = get_db()
-    frameworks = db.execute(
-        'SELECT p.id, amitt_id, name, summary'
-        ' FROM framework p'
-        ' ORDER BY amitt_id ASC'
-    ).fetchall()
+    frameworks = Framework.query.order_by("amitt_id")
     return render_template('framework/index.html', frameworks=frameworks)
 
 
@@ -34,30 +38,13 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO framework (amitt_id, name, summary)'
-                ' VALUES (?, ?, ?)',
-                (amitt_id, name, summary)
-            )
-            db.commit()
+            framework = Framework(amitt_id, name, summary)
+            db_session.add(framework)
+            db_session.commit()
             return redirect(url_for('framework.index'))
 
     return render_template('framework/create.html')
 
-
-def get_framework(id, check_author=True):
-    framework = get_db().execute(
-        'SELECT p.id, amitt_id, name, summary'
-        ' FROM framework p'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchone()
-
-    if framework is None:
-        abort(404, f"Phase id {id} doesn't exist.")
-
-    return framework
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
@@ -75,13 +62,10 @@ def update(id):
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'UPDATE framework SET name = ?, summary = ?'
-                ' WHERE id = ?',
-                (title, body, id)
-            )
-            db.commit()
+            framework.name = name
+            framework.summary = summary
+            db_session.add(framework)
+            db_session.commit()            
             return redirect(url_for('framework.index'))
 
     return render_template('framework/update.html', framework=framework)
@@ -90,9 +74,8 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    get_framework(id)
-    db = get_db()
-    db.execute('DELETE FROM framework WHERE id = ?', (id,))
-    db.commit()
+    framework = get_framework(id)
+    db_session.delete(framework)
+    db_session.commit()            
     return redirect(url_for('framework.index'))
 

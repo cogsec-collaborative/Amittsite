@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Edit "{{ phase['name'] }}"{% endblock %}</h1>
+  <h1>{% block title %}Edit "{{ phase.name }}"{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <form method="post">
     <label for="name">Name</label>
     <input name="name" id="name"
-      value="{{ request.form['name'] or phase['name'] }}" required>
+      value="{{ request.form['name'] or phase.name }}" required>
     <label for="rank">Rank</label>
     <input name="rank" id="rank"
-      value="{{ request.form['rank'] or phase['rank'] }}" required>
+      value="{{ request.form['rank'] or phase.rank }}" required>
     <label for="rank">AMITT id</label>
     <input name="amitt_id" id="amitt_id"
-      value="{{ request.form['amitt_id'] or phase['amitt_id'] }}" required>
+      value="{{ request.form['amitt_id'] or phase.amitt_id }}" required>
     <label for="summary">Body</label>
-    <textarea name="summary" id="summary">{{ request.form['summary'] or phase['summary'] }}</textarea>
+    <textarea name="summary" id="summary">{{ request.form['summary'] or phase.summary }}</textarea>
     <input type="submit" value="Save">
   </form>
   <hr>
-  <form action="{{ url_for('phase.delete', id=phase['id']) }}" method="post">
+  <form action="{{ url_for('phase.delete', id=phase.id) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
   </form>
 {% endblock %}

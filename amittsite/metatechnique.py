@@ -4,31 +4,22 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from amittsite.auth import login_required
-from amittsite.db import get_db
+from amittsite.database import db_session
+from amittsite.models import Metatechnique
+
 
 bp = Blueprint('metatechnique', __name__, url_prefix='/metatechnique')
 
 def get_metatechnique(id, check_author=True):
-    metatechnique = get_db().execute(
-        'SELECT p.id, p.amitt_id, p.name, p.summary'
-        ' FROM metatechnique p'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchone()
-
+    metatechnique = Metatechnique.query.filter(Metatechnique.id == id).first()
     if metatechnique is None:
         abort(404, f"Task id {id} doesn't exist.")
-
     return metatechnique
+
 
 @bp.route('/')
 def index():
-    db = get_db()
-    metatechniques = db.execute(
-        'SELECT p.id, p.amitt_id, p.name, p.summary'
-        ' FROM metatechnique p'
-        ' ORDER BY p.amitt_id ASC'
-    ).fetchall()
+    metatechniques = Metatechnique.query.order_by("amitt_id")
     return render_template('metatechnique/index.html', metatechniques=metatechniques)
 
 
@@ -53,13 +44,9 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO metatechnique (amitt_id, name, summary)'
-                ' VALUES (?, ?, ?)',
-                (amitt_id, name, summary)
-            )
-            db.commit()
+            metatechnique = Metatechnique(amitt_id, name, summary)
+            db_session.add(metatechnique)
+            db_session.commit()
             return redirect(url_for('metatechnique.index'))
 
     return render_template('metatechnique/create.html')
@@ -71,23 +58,20 @@ def update(id):
     metatechnique = get_metatechnique(id)
 
     if request.method == 'POST':
-        title = request.form['name']
-        body = request.form['summary']
+        name = request.form['name']
+        summary = request.form['summary']
         error = None
 
-        if not title:
+        if not name:
             error = 'Name is required.'
 
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'UPDATE metatechnique SET name = ?, summary = ?'
-                ' WHERE id = ?',
-                (title, body, id)
-            )
-            db.commit()
+            metatechnique.name = name
+            metatechnique.summary = summary
+            db_session.add(metatechnique)
+            db_session.commit()            
             return redirect(url_for('metatechnique.index'))
 
     return render_template('metatechnique/update.html', metatechnique=metatechnique)
@@ -96,9 +80,8 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    get_metatechnique(id)
-    db = get_db()
-    db.execute('DELETE FROM metatechnique WHERE id = ?', (id,))
-    db.commit()
+    metatechnique = get_metatechnique(id)
+    db_session.delete(metatechnique)
+    db_session.commit()
     return redirect(url_for('metatechnique.index'))
 

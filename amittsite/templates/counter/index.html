@@ -12,11 +12,11 @@
     <article class="counter">
       <header>
         <div>
-          <h1>{{ counter['amitt_id'] }} {{ counter['name'] }}</h1>
-          <div class="tactic">Tactic stage: {{ counter['tactic_id'] }}</div>
+          <h1>{{ counter.amitt_id }} {{ counter.name }}</h1>
+          <div class="tactic">Tactic stage: {{ counter.tactic_id }}</div>
         </div>
       </header>
-      <p class="summary">Summary: {{ counter['summary'] }} - <a class="action" href="{{ url_for('counter.view', id=counter['id']) }}">Details</a></p>
+      <p class="summary">Summary: {{ counter.summary }} - <a class="action" href="{{ url_for('counter.view', id=counter.id) }}">Details</a></p>
     </article>
     {% if not loop.last %}
       <hr>

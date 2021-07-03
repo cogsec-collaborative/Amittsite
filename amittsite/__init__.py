@@ -2,7 +2,10 @@ import os
 
 from flask import Flask
 from flask import render_template
-from . import db
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from amittsite.database import init_db
+from amittsite.database import db_session
 from . import auth
 from . import counter
 from . import detection
@@ -16,19 +19,21 @@ import sqlite3
 
 
 def create_app(test_config=None):
+
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'amittsite.sqlite'),
-    )
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
+    # Configuration settings
+    # app.config.from_mapping(
+    #     SECRET_KEY=os.environ.get('SECRET_KEY') or 'dev',
+    #     DATABASE=os.path.join(app.instance_path, 'amittsite.sqlite'),
+    #     SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.instance_path, 'amittsite.sqlite'),
+    # )
+    app.config.from_mapping(
+        SECRET_KEY=os.environ.get('SECRET_KEY') or 'dev',
+        SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL'],
+    )
+    print('{}'.format(app.config))
 
     # ensure the instance folder exists
     try:
@@ -36,18 +41,24 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # root? 
+    # Main route: to index page
     @app.route('/')
     def index():
         return render_template('index.html')
 
-    # a simple page that says hello
+    # Testing route: a simple page that says hello
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
 
-    db.init_app(app)
+    # do the database stuff
+    init_db()
 
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db_session.remove()
+
+    # register all the object code
     app.register_blueprint(auth.bp)
     app.register_blueprint(counter.bp)
     app.register_blueprint(detection.bp)
@@ -58,25 +69,5 @@ def create_app(test_config=None):
     app.register_blueprint(task.bp)
     app.register_blueprint(technique.bp)
     app.add_url_rule('/', endpoint='index')
-
-
-    # Load up database
-    # olddb = sqlite3.connect('amitt_sqlite.db')
-    # oldcursor = olddb.execute('SELECT name FROM sqlite_master WHERE type = "table"')
-    # print('tables: ')
-    # for row in oldcursor:
-    #     print('{}'.format(row))
-
-    # # phases
-    # oldcursor = olddb.execute("SELECT id, name, rank, summary from df_phases")
-    # for row in oldcursor:
-    #     db.execute(
-    #         'INSERT INTO phase (row[0], row[1], row[2], row[3])'
-    #         ' VALUES (?, ?, ?, ?)',
-    #         (amitt_id, name, summary, rank)
-    #     )
-
-    # db.commit()
-
 
     return app

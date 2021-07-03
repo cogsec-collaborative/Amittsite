@@ -4,31 +4,22 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from amittsite.auth import login_required
-from amittsite.db import get_db
+from amittsite.database import db_session
+from amittsite.models import Task
+from amittsite.models import Tactic
 
 bp = Blueprint('task', __name__, url_prefix='/task')
 
 def get_task(id, check_author=True):
-    task = get_db().execute(
-        'SELECT p.id, p.amitt_id, p.name, p.summary, p.tactic_id, p.framework_id'
-        ' FROM task p JOIN tactic u ON p.tactic_id = u.amitt_id'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchone()
-
+    task = Task.query.join(Tactic).filter(Task.id == id).first()
     if task is None:
         abort(404, f"Task id {id} doesn't exist.")
-
     return task
+
 
 @bp.route('/')
 def index():
-    db = get_db()
-    tasks = db.execute(
-        'SELECT p.id, p.amitt_id, p.name, p.summary, p.tactic_id, p.framework_id'
-        ' FROM task p JOIN tactic u ON p.tactic_id = u.amitt_id'
-        ' ORDER BY p.amitt_id ASC'
-    ).fetchall()
+    tasks = Task.query.join(Tactic).order_by("amitt_id")
     return render_template('task/index.html', tasks=tasks)
 
 
@@ -55,13 +46,9 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO task (amitt_id, name, summary, tactic_id, framework_id)'
-                ' VALUES (?, ?, ?, ?, ?)',
-                (amitt_id, name, summary, tactic_id, framework_id)
-            )
-            db.commit()
+            task = Task(amitt_id, tactic_id, framework_id, name, summary)
+            db_session.add(task)
+            db_session.commit()
             return redirect(url_for('task.index'))
 
     return render_template('task/create.html')
@@ -73,23 +60,20 @@ def update(id):
     task = get_task(id)
 
     if request.method == 'POST':
-        title = request.form['name']
-        body = request.form['summary']
+        name = request.form['name']
+        summary = request.form['summary']
         error = None
 
-        if not title:
+        if not name:
             error = 'Name is required.'
 
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'UPDATE task SET name = ?, summary = ?'
-                ' WHERE id = ?',
-                (title, body, id)
-            )
-            db.commit()
+            task.name = name
+            task.summary = summary
+            db_session.add(task)
+            db_session.commit()
             return redirect(url_for('task.index'))
 
     return render_template('task/update.html', task=task)
@@ -98,9 +82,8 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    get_task(id)
-    db = get_db()
-    db.execute('DELETE FROM task WHERE id = ?', (id,))
-    db.commit()
+    task = get_task(id)
+    db_session.delete(task)
+    db_session.commit()
     return redirect(url_for('task.index'))
 

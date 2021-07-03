@@ -4,40 +4,25 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from amittsite.auth import login_required
-from amittsite.db import get_db
+from amittsite.database import db_session
+from amittsite.models import Counter
+from amittsite.models import CounterTechnique
+from amittsite.models import Technique
+
 
 bp = Blueprint('counter', __name__, url_prefix='/counter')
 
 def get_counter(id, check_author=True):
-    db = get_db()
-    counter = db.execute(
-        'SELECT p.id, p.amitt_id, p.name, p.summary, p.tactic_id'
-        ' FROM counter p JOIN tactic u ON p.tactic_id = u.amitt_id'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchone()
-
+    counter = Counter.query.filter(Counter.id == id).first()
     if counter is None:
-        abort(404, f"Technique id {id} doesn't exist.")
-
-    techniques = db.execute(
-        'SELECT p.counter_id, p.technique_id, p.summary, t.name, t.id'
-        ' FROM counter_technique p JOIN technique t ON p.technique_id = t.amitt_id'
-        ' WHERE p.counter_id = ?'
-        ' ORDER BY p.technique_id ASC',
-        (counter['amitt_id'],)
-    ).fetchall()
-
+        abort(404, f"Counter id {id} doesn't exist.")
+    techniques = Technique.query.join(CounterTechnique).filter(CounterTechnique.counter_id == counter.amitt_id)
     return (counter, techniques)
+
 
 @bp.route('/')
 def index():
-    db = get_db()
-    counters = db.execute(
-        'SELECT p.id, p.amitt_id, p.name, p.summary, p.tactic_id, p.metatechnique_id'
-        ' FROM counter p JOIN tactic u ON p.tactic_id = u.amitt_id'
-        ' ORDER BY p.amitt_id ASC'
-    ).fetchall()
+    counters = Counter.query.order_by("amitt_id")
     return render_template('counter/index.html', counters=counters)
 
 
@@ -64,13 +49,9 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO counter (amitt_id, name, summary, tactic_id, metatechnique_id)'
-                ' VALUES (?, ?, ?, ?, ?)',
-                (amitt_id, name, summary, tactic_id, metatechnique_id)
-            )
-            db.commit()
+            counter = Counter(amitt_id, metatechnique_id, tactic_id, name, summary)
+            db_session.add(counter)
+            db_session.commit()
             return redirect(url_for('counter.index'))
 
     return render_template('counter/create.html')
@@ -82,23 +63,20 @@ def update(id):
     counter, techniques = get_counter(id)
 
     if request.method == 'POST':
-        title = request.form['name']
-        body = request.form['summary']
+        name = request.form['name']
+        summary = request.form['summary']
         error = None
 
-        if not title:
+        if not name:
             error = 'Name is required.'
 
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'UPDATE counter SET name = ?, summary = ?'
-                ' WHERE id = ?',
-                (title, body, id)
-            )
-            db.commit()
+            counter.name = name
+            counter.summary = summary
+            db_session.add(counter)
+            db_session.commit()
             return redirect(url_for('counter.index'))
 
     return render_template('counter/update.html', counter=counter)
@@ -107,9 +85,8 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    get_counter(id)
-    db = get_db()
-    db.execute('DELETE FROM counter WHERE id = ?', (id,))
-    db.commit()
+    counter, techniques = get_counter(id)
+    db_session.delete(counter)
+    db_session.commit()
     return redirect(url_for('counter.index'))
 

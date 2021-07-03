@@ -4,47 +4,35 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from amittsite.auth import login_required
-from amittsite.db import get_db
+from amittsite.database import db_session
+from amittsite.models import Technique
+from amittsite.models import Tactic
+from amittsite.models import Counter
+from amittsite.models import CounterTechnique
+from amittsite.models import Detection
+from amittsite.models import DetectionTechnique
+
 
 bp = Blueprint('technique', __name__, url_prefix='/technique')
 
 def get_technique(id, check_author=True):
-    db = get_db()
-    technique = db.execute(
-        'SELECT p.id, p.amitt_id, p.name, p.summary, p.tactic_id'
-        ' FROM technique p JOIN tactic u ON p.tactic_id = u.amitt_id'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchone()
-
+    technique = Technique.query.join(Tactic).filter(Technique.id == id).first()
     if technique is None:
         abort(404, f"Technique id {id} doesn't exist.")
-
-    counters = db.execute(
-        'SELECT p.counter_id, p.technique_id, p.summary, c.name, c.id'
-        ' FROM counter_technique p JOIN counter c ON p.counter_id = c.amitt_id'
-        ' WHERE p.technique_id = ?'
-        ' ORDER BY p.counter_id ASC',
-        (technique['amitt_id'],)
-    ).fetchall()
-
-    return (technique, counters)
+    counters = Counter.query.join(CounterTechnique).filter(CounterTechnique.technique_id == technique.amitt_id).order_by("amitt_id")
+    detections = Detection.query.join(DetectionTechnique).filter(DetectionTechnique.technique_id == technique.amitt_id).order_by("amitt_id")
+    return (technique, counters, detections)
 
 @bp.route('/')
 def index():
-    db = get_db()
-    techniques = db.execute(
-        'SELECT p.id, p.amitt_id, p.name, p.summary, p.tactic_id'
-        ' FROM technique p JOIN tactic u ON p.tactic_id = u.amitt_id'
-        ' ORDER BY p.amitt_id ASC'
-    ).fetchall()
+    techniques = Technique.query.join(Tactic).order_by("amitt_id")
     return render_template('technique/index.html', techniques=techniques)
 
 
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))
 def view(id):
-    technique, counters = get_technique(id)
-    return render_template('technique/view.html', technique=technique, counters=counters)
+    technique, counters, detections = get_technique(id)
+    return render_template('technique/view.html', technique=technique, counters=counters, detections=detections)
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -52,9 +40,9 @@ def view(id):
 def create():
     if request.method == 'POST':
         amitt_id = request.form['amitt_id']
+        tactic_id = request.form['tactic_id']
         name = request.form['name']
         summary = request.form['summary']
-        tactic_id = request.form['tactic_id']
         error = None
 
         if not name:
@@ -63,13 +51,9 @@ def create():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO technique (amitt_id, name, summary, tactic_id)'
-                ' VALUES (?, ?, ?, ?)',
-                (amitt_id, name, summary, tactic_id)
-            )
-            db.commit()
+            technique = Technique(amitt_id, tactic_id, name, summary)
+            db_session.add(technique)
+            db_session.commit()
             return redirect(url_for('technique.index'))
 
     return render_template('technique/create.html')
@@ -78,26 +62,23 @@ def create():
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
-    technique, counters = get_technique(id)
+    technique, counters, detections = get_technique(id)
 
     if request.method == 'POST':
-        title = request.form['name']
-        body = request.form['summary']
+        name = request.form['name']
+        summary = request.form['summary']
         error = None
 
-        if not title:
+        if not name:
             error = 'Name is required.'
 
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'UPDATE technique SET name = ?, summary = ?'
-                ' WHERE id = ?',
-                (title, body, id)
-            )
-            db.commit()
+            technique.name = name
+            technique.summary = summary
+            db_session.add(technique)
+            db_session.commit()
             return redirect(url_for('technique.index'))
 
     return render_template('technique/update.html', technique=technique)
@@ -106,9 +87,8 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    get_technique(id)
-    db = get_db()
-    db.execute('DELETE FROM technique WHERE id = ?', (id,))
-    db.commit()
+    technique, counters, detections = get_technique(id)
+    db_session.delete(technique)
+    db_session.commit()
     return redirect(url_for('technique.index'))
 

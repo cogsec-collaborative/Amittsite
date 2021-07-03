@@ -1,19 +1,25 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{{ technique['amitt_id'] }} "{{ technique['name'] }}"{% endblock %}</h1>
+  <h1>{% block title %}{{ technique.amitt_id }} "{{ technique.name }}"{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 
-<p class="tactic">Tactic stage: {{ technique['tactic_id'] }}</p>
-<p class="summary">Summary: {{ technique['summary'] }}</p>
+<p class="tactic">Tactic stage: {{ technique.tactic_id }}</p>
+<p class="summary">Summary: {{ technique.summary }}</p>
 <p class="counters">Has counters: 
     {% for counter in counters %}
-      <div class="counter"><a class="action" href="{{ url_for('counter.view', id=counter['id']) }}">{{ counter['counter_id'] }} {{ counter['name'] }}</a></div>
+      <div class="counter"><a class="action" href="{{ url_for('counter.view', id=counter.id) }}">{{ counter.amitt_id }} {{ counter.name }}</a></div>
   {% endfor %}
 </p>
 
-<p class="actions"><a class="action" href="{{ url_for('technique.update', id=technique['id']) }}">Edit</a></p>
+<p class="detections">Detection methods include: 
+    {% for detection in detections %}
+      <div class="detection"><a class="action" href="{{ url_for('detection.view', id=detection.id) }}">{{ detection.amitt_id }} {{ detection.name }}</a></div>
+  {% endfor %}
+</p>
+
+<p class="actions"><a class="action" href="{{ url_for('technique.update', id=technique.id) }}">Edit</a></p>
 {% endblock %}
 
