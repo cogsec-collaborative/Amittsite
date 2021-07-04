@@ -132,6 +132,40 @@ class Counter(Base):
         return f'<Counter {self.amitt_id!r} {self.name!r}>'
 
 
+class Resource(Base):
+    __tablename__ = 'resource'
+    id = Column(Integer, primary_key=True)
+    amitt_id = Column(String(20), unique=True)
+    name = Column(String(200))
+    summary = Column(Text)
+    resource_type = Column(String(200))
+
+    def __init__(self, amitt_id=None, name=None, summary=None, resource_type=None):
+        self.amitt_id = amitt_id
+        self.name = name
+        self.summary = summary
+        self.resource_type = resource_type
+
+    def __repr__(self):
+        return f'<Resource {self.amitt_id!r} {self.name!r}>'
+
+
+class Responsetype(Base):
+    __tablename__ = 'responsetype'
+    id = Column(Integer, primary_key=True)
+    amitt_id = Column(String(20), unique=True)
+    name = Column(String(200))
+    summary = Column(Text)
+
+    def __init__(self, amitt_id=None, name=None, summary=None):
+        self.amitt_id = amitt_id
+        self.name = name
+        self.summary = summary
+
+    def __repr__(self):
+        return f'<Responsetype {self.amitt_id!r} {self.name!r}>'
+
+
 class Detection(Base):
     __tablename__ = 'detection'
     id = Column(Integer, primary_key=True)
