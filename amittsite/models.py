@@ -250,6 +250,109 @@ class DetectionTechnique(Base):
     def __repr__(self):
         return f'<CDetectionTechnique {self.detection_id!r} {self.technique_id!r}>'
 
+
+class Group(Base):
+    __tablename__ = 'group'
+    id = Column(Integer, primary_key=True)
+    amitt_id = Column(String(20), unique=True)
+    name = Column(String(200))
+    summary = Column(Text)
+    url = Column(Text)
+    sector = Column(String(200))
+    primary_role = Column(String(200))
+    secondary_role = Column(String(200))
+    primary_subject = Column(String(200))
+    secondary_subject = Column(String(200))
+    volunteers = Column(String(3))
+    region = Column(String(200))
+    country = Column(String(200))
+    twitter_handle = Column(String(200))
+
+    def __init__(self, amitt_id=None, name=None, summary=None, url=None, sector=None, primary_role=None, 
+        secondary_role=None, primary_subject=None, secondary_subject=None, volunteers=None, 
+        region=None, country=None, twitter_handle=None):
+        self.amitt_id = amitt_id
+        self.name = name
+        self.summary = summary
+        self.url = url
+        self.sector = sector
+        self.primary_role = primary_role
+        self.secondary_role = secondary_role
+        self.primary_subject = primary_subject
+        self.secondary_subject = secondary_subject
+        self.volunteers = volunteers
+        self.region = region
+        self.country = country
+        self.twitter_handle = twitter_handle
+
+    def __repr__(self):
+        return f'<Group {self.amitt_id!r} {self.name!r}>'
+
+class Incident(Base):
+    __tablename__ = 'incident'
+    id = Column(Integer, primary_key=True)
+    amitt_id = Column(String(20), unique=True)
+    name = Column(String(200))
+    summary = Column(Text)
+    objecttype = Column(String(200))
+    year_started = Column(Integer)
+    attributions_seen = Column(String(200))
+    found_in_country = Column(String(200))
+
+    def __init__(self, amitt_id=None, name=None, summary=None, objecttype=None, year_started=None, 
+        attributions_seen=None, found_in_country=None):
+        self.amitt_id = amitt_id
+        self.name = name
+        self.summary = summary
+        self.objecttype = objecttype
+        self.year_started = year_started
+        self.attributions_seen = attributions_seen
+        self.found_in_country = found_in_country
+
+    def __repr__(self):
+        return f'<Incident {self.amitt_id!r} {self.name!r}>'
+
+class Tool(Base):
+    __tablename__ = 'tool'
+    id = Column(Integer, primary_key=True)
+    amitt_id = Column(String(20), unique=True)
+    name = Column(String(200))
+    summary = Column(Text)
+    organization = Column(String(200))
+    url = Column(Text)
+    category = Column(String(200))
+    disinformation_use = Column(String(200))
+    cogseccollab_use = Column(String(200))
+    function = Column(Text)
+    code_url = Column(Text)
+    artifacts = Column(String(200))
+    automation = Column(String(200))
+    platform = Column(String(200))
+    accessibility = Column(String(200))
+
+    # FIXIT: move from organization to group_id
+    def __init__(self, amitt_id=None, name=None, summary=None, organization=None, url=None, 
+        category=None, disinformation_use=None, cogseccollab_use=None, function=None, code_url=None, 
+        artifacts=None, automation=None, platform=None, accessibility=None):
+        self.amitt_id = amitt_id
+        self.name = name
+        self.summary = summary
+        self.organization = organization
+        self.url = url
+        self.category = category
+        self.disinformation_use = disinformation_use
+        self.cogseccollab_use = cogseccollab_use
+        self.function = function
+        self.code_url = code_url
+        self.artifacts = artifacts
+        self.automation = automation
+        self.platform = platform
+        self.accessibility = accessibility
+ 
+    def __repr__(self):
+        return f'<Tool {self.amitt_id!r} {self.name!r}>'
+
+
 '''
 /* CREATE TABLE IF NOT EXISTS sector (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -281,17 +384,6 @@ class DetectionTechnique(Base):
   summary TEXT NOT NULL,
   FOREIGN KEY (sector_id) REFERENCES sector (amitt_id),
   FOREIGN KEY (framework_id) REFERENCES framework (amitt_id)
-); */
-
-/* CREATE TABLE IF NOT EXISTS incident (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  amitt_id TEXT NOT NULL,
-  name TEXT NOT NULL,
-  summary TEXT NOT NULL,
-  incident_type TEXT NOT NULL,
-  year_started INTEGER NOT NULL,
-  countries TEXT NOT NULL,
-  found_via TEXT NOT NULL
 ); */
 
 /* CREATE TABLE IF NOT EXISTS response_type (

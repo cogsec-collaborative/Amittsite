@@ -10,6 +10,8 @@ from . import auth
 from . import counter
 from . import detection
 from . import framework
+from . import group
+from . import incident
 from . import metatechnique
 from . import phase
 from . import resource
@@ -17,6 +19,7 @@ from . import responsetype
 from . import tactic
 from . import task
 from . import technique
+from . import tool
 import sqlite3
 
 
@@ -71,6 +74,12 @@ def create_app(test_config=None):
         return render_template('textgrid.html', div = "#redgrid", array=array, topcolor='#0000ff')##E74C3C')
 
 
+    @app.route('/mapblobs')
+    def mapblobs():
+        array = []
+        return render_template('mapblobs.html', array=array)
+
+
     # do the database stuff
     init_db()
 
@@ -83,6 +92,8 @@ def create_app(test_config=None):
     app.register_blueprint(counter.bp)
     app.register_blueprint(detection.bp)
     app.register_blueprint(framework.bp)
+    app.register_blueprint(group.bp)
+    app.register_blueprint(incident.bp)
     app.register_blueprint(metatechnique.bp)
     app.register_blueprint(phase.bp)
     app.register_blueprint(resource.bp)
@@ -90,6 +101,7 @@ def create_app(test_config=None):
     app.register_blueprint(tactic.bp)
     app.register_blueprint(task.bp)
     app.register_blueprint(technique.bp)
+    app.register_blueprint(tool.bp)
     app.add_url_rule('/', endpoint='index')
 
     return app

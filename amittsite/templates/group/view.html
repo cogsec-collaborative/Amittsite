@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{ group.amitt_id }} "{{ group.name }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<p class="url">URL: <a href="{{ group.url }}">{{ group.url }}</a></p>
+<p class="sector">Sector: {{ group.sector }}</p>
+<p class="primary_role">Primary role: {{ group.primary_role }}</p>
+<p class="secondary_role">Secondary role: {{ group.secondary_role }}</p>
+<p class="primary_subject">Primary subject: {{ group.primary_subject }}</p>
+<p class="secondary_subject">Secondary subject: {{ group.secondary_subject }}</p>
+<p class="volunteers">Has volunteers: {{ group.volunteers }}</p>
+<p class="region">Region: {{ group.region }}</p>
+<p class="country">Country: {{ group.country }}</p>
+<p class="twitter_handle">Twitter handle: {{ group.twitter_handle }}</p>
+<p class="summary">Summary: {{ group.summary }}</p>
+
+<p class="actions"><a class="action" href="{{ url_for('group.update', id=group.id) }}">Edit</a></p>
+{% endblock %}
+
