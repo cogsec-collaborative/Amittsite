@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}About the AMITT frameworks{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+  <div>
+
+<p>The AMITT (Adversarial Misinformation and Influence Tactics and Techniques) frameworks are designed for describing and understanding different parts of disinformation incidents, and are:
+<ul>
+<li><strong>AMITT-STIX</strong> for disinformation objects, including actors, behaviours, narratives and artifacts - this makes it easy for AMITT data to be passed between ISAOs and similar bodies using standards like TAXII.</li>
+<li><strong>AMITT Red</strong> for disinformation creation behaviours</li>
+<li><strong>AMITT Blue</strong> for disinformation countermeasure and mitigation behaviours.</li>
+</ul></p>
+
+<p>AMITT is part of work on adapting information security (infosec) practices to help track and counter misinformation, and is designed to fit existing infosec practices and tools. To help with this, AMITT's style is based on the <a href='https://github.com/mitre-attack/attack-website/'>MITRE ATT&CK</a> and STIX information security frameworks.</p>  
+
+<p>AMITT frameworks and data are available under a CC-BY-4.0 license - credit us (ideally also tell us about potentially useful changes), and you're free to use them.  AMITT templates, datasets, and user guides are available in <a href="https://github.com/cogsec-collaborative/AMITT">https://github.com/cogsec-collaborative/AMITT</a>. If you're using other tools, AMITT is embedded in the MISP toolset, and STIX templates for AMITT objects are available in the <a href='https://github.com/cogsec-collaborative/amitt_cti'>AMITT_CTI repository</a>. </p>
+
+<hr>
+</div>
+
+<div>
+  <h3>AMITT Contributors</h3>
+
+The AMITT frameworks are a community effort: 
+<ul>
+  <li><a href="http://cogsec-collab.org/">CogSecCollab</a> maintains and updates We've used AMITT in the CTI League's Covid19 responses, and tested it in trials with NATO, the EU, and several other countries' disinformation units. Pablo Breuer and  are the current design authorities for the AMITT models.</li>
+  <li>The Credibility Coalition's <a href="https://github.com/credcoalition/community-site/wiki/Working-Groups">Misinfosec working group</a>, aka MisinfosecWG, created the original AMITT frameworks. The Red Framework was started in December 2018, and refined in a Credibility Coalition Misinfosec seminar; the Blue Framework was started as a collection of potential disinformation countermeasures, at a Coalition Misinfosec seminar in November 2019. CogSecCollab is the nonprofit that spun out of MisinfosecWG.</li>
+  <li>Many other people have contributed to AMITT. Thank you.</li>
+</ul>
+
+<p>Suggestions for AMITT framework changes can be made through a <a href="https://docs.google.com/forms/d/e/1FAIpQLSdZuyKFp1UZzk6qUE4IN1O14HaJ-F4TH9thxR3hrRU-Mu7QUQ/viewform">Googleform</a>. Changes are then agreed between CogSecCollab and the AMITT design authorities - currently SJ Terp and Pablo Breuer. </p>
+
+  </div>
+{% endblock %}

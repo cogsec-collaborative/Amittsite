@@ -51,6 +51,11 @@ def create_app(test_config=None):
     def index():
         return render_template('index.html')
 
+    # About page
+    @app.route('/about')
+    def about():
+        return render_template('about.html')
+
     # Testing route: a simple page that says hello
     @app.route('/hello')
     def hello():
@@ -71,7 +76,7 @@ def create_app(test_config=None):
           ['', '', '', '', '', 'T0027', 'T0037', '', 'T0055', '', '', ''],
           ['', '', '', '', '', 'T0028', 'T0038', '', 'X0056', '', '', '']
           ]
-        return render_template('textgrid.html', div = "#redgrid", array=array, topcolor='#0000ff')##E74C3C')
+        return render_template('textgrid.html', gridparams=["#redgrid", '#E74C3C', array])#'#E74C3C')
 
 
     @app.route('/mapblobs')

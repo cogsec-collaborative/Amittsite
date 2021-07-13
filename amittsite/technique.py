@@ -2,6 +2,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
 from werkzeug.exceptions import abort
+import pandas as pd
 
 from amittsite.auth import login_required
 from amittsite.database import db_session
@@ -26,7 +27,15 @@ def get_technique(id, check_author=True):
 @bp.route('/')
 def index():
     techniques = Technique.query.join(Tactic).order_by("amitt_id")
-    return render_template('technique/index.html', techniques=techniques)
+
+    # Create grid for clickable visualisation
+    df = pd.read_sql(techniques.statement, techniques.session.bind)
+    dflists = df.groupby('tactic_id')['amitt_id'].apply(list).reset_index()
+    dfidgrid = pd.DataFrame(dflists['amitt_id'].to_list())
+    dfgrid = pd.concat([dflists[['tactic_id']], dfidgrid], axis=1).fillna('')
+    gridarray = [dfgrid[col].to_list() for col in dfgrid.columns]
+
+    return render_template('technique/index.html', techniques=techniques, gridparams=["#redgrid", '#E74C3C', gridarray])
 
 
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))

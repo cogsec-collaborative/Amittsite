@@ -11,15 +11,15 @@ from amittsite.models import Responsetype
 bp = Blueprint('responsetype', __name__, url_prefix='/responsetype')
 
 def get_responsetype(id, check_author=True):
-    responsetype = Resource.query.filter(Resource.id == id).first()
+    responsetype = Responsetype.query.filter(Responsetype.id == id).first()
     if responsetype is None:
-        abort(404, f"Resource id {id} doesn't exist.")
+        abort(404, f"Responsetype id {id} doesn't exist.")
     return responsetype
 
 
 @bp.route('/')
 def index():
-    responsetypes = Resource.query.all() #.order_by("amitt_id")
+    responsetypes = Responsetype.query.all() #.order_by("amitt_id")
     return render_template('responsetype/index.html', responsetypes=responsetypes)
 
 
@@ -38,7 +38,7 @@ def create():
         if error is not None:
             flash(error)
         else:
-            responsetype = Resource(amitt_id, name, summary)
+            responsetype = Responsetype(amitt_id, name, summary)
             db_session.add(responsetype)
             db_session.commit()
             return redirect(url_for('responsetype.index'))

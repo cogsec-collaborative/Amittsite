@@ -8,6 +8,11 @@
 {% endblock %}
 
 {% block content %}
+  <div id="redgrid"></div>
+  <script type="text/javascript">
+    fillGrid({{gridparams|tojson}})
+  </script>
+
   {% for technique in techniques %}
     <article class="technique">
       <header>

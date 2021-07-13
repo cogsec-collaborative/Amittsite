@@ -8,6 +8,11 @@
 {% endblock %}
 
 {% block content %}
+  <div id="bluegrid"></div>
+  <script type="text/javascript">
+    fillGrid({{gridparams|tojson}})
+  </script>
+
   {% for counter in counters %}
     <article class="counter">
       <header>

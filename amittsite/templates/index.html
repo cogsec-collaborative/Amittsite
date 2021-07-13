@@ -8,27 +8,34 @@
 
   <div>
 
-<p>AMITT (Adversarial Misinformation and Influence Tactics and Techniques) is a set of frameworks for describing and understanding disinformation incidents. </p>
-<p>AMITT is part of work on adapting information security (infosec) practices to help track and counter misinformation, and is designed to fit existing infosec practices and tools.
-
-AMITT's style is based on the <a href='https://github.com/mitre-attack/attack-website/'>MITRE ATT&CK framework</a>; STIX templates for AMITT objects are available in the <a href='https://github.com/cogsec-collaborative/amitt_cti'>AMITT_CTI repository</a> - these make it easy for AMITT data to be passed between ISAOs and similar bodies using standards like TAXI.</p>
-
+<p>AMITT (Adversarial Misinformation and Influence Tactics and Techniques) is a set of frameworks for describing and understanding disinformation incidents. <a class="about" href="{{ url_for('about') }}">Learn more about AMITT</a></p>
 <hr>
   </div>
   <div>
-    <a class="counter" href="{{ url_for('counter.index') }}">Countermeasures</a>
-    <a class="detection" href="{{ url_for('detection.index') }}">Detections</a>
-    <a class="framework" href="{{ url_for('framework.index') }}">Frameworks</a>
-    <a class="group" href="{{ url_for('group.index') }}">Groups</a>
-    <a class="incident" href="{{ url_for('incident.index') }}">Incidents</a>
-    <a class="metatechnique" href="{{ url_for('metatechnique.index') }}">Metatechniques</a>
-    <a class="phase" href="{{ url_for('phase.index') }}">Phases</a>
-    <a class="resource" href="{{ url_for('resource.index') }}">Resources</a>
-    <a class="resource" href="{{ url_for('resource.index') }}">Responsetypes</a>
-    <a class="tactic" href="{{ url_for('tactic.index') }}">Tactics</a>
-    <a class="task" href="{{ url_for('task.index') }}">Tasks</a>
-    <a class="technique" href="{{ url_for('technique.index') }}">Techniques</a>
-    <a class="tool" href="{{ url_for('tool.index') }}">Tools</a>
+
+<h3>AMITT Objects</h3>
+
+Framework objects:
+<ul>
+    <li><a class="framework" href="{{ url_for('framework.index') }}">Frameworks</a></li>
+    <li><a class="phase" href="{{ url_for('phase.index') }}">Phases</a></li>
+    <li><a class="tactic" href="{{ url_for('tactic.index') }}">Tactics</a></li>
+    <li><a class="technique" href="{{ url_for('technique.index') }}">Techniques</a></li>
+    <li><a class="task" href="{{ url_for('task.index') }}">Tasks</a></li>
+    <li><a class="counter" href="{{ url_for('counter.index') }}">Countermeasures</a></li>
+    <li><a class="detection" href="{{ url_for('detection.index') }}">Detections</a></li>
+    <li><a class="responsetype" href="{{ url_for('responsetype.index') }}">Responsetypes</a></li>
+    <li><a class="metatechnique" href="{{ url_for('metatechnique.index') }}">Metatechniques</a></li>
+    <li><a class="resource" href="{{ url_for('resource.index') }}">Resources</a></li>
+    <!-- Add: actortypes,  -->
+</ul>
+
+Datasets:
+<ul>
+    <li><a class="incident" href="{{ url_for('incident.index') }}">Incidents</a></li>
+    <li><a class="group" href="{{ url_for('group.index') }}">Groups</a></li>
+    <li><a class="tool" href="{{ url_for('tool.index') }}">Tools</a></li>
+</ul>
 
   </div>
 {% endblock %}
