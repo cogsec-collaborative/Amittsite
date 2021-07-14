@@ -8,6 +8,15 @@
 
 <p class="tactic">Tactic stage: {{ technique.tactic_id }}</p>
 <p class="summary">Summary: {{ technique.summary }}</p>
+<hr>
+<p class="counters">Examples include: 
+  <ul>
+    {% for example in examples %}
+      <div class="example"><li><strong>{{ example.amitt_id }} {{ example.name }}</strong>: {{ example.summary }}</li></div>
+  {% endfor %}
+  </ul>
+</p>
+
 <p class="counters">Has counters: 
     {% for counter in counters %}
       <div class="counter"><a class="action" href="{{ url_for('counter.view', id=counter.id) }}">{{ counter.amitt_id }} {{ counter.name }}</a></div>

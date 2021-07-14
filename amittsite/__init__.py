@@ -9,6 +9,7 @@ from amittsite.database import db_session
 from . import auth
 from . import counter
 from . import detection
+from . import example
 from . import framework
 from . import group
 from . import incident
@@ -96,6 +97,7 @@ def create_app(test_config=None):
     app.register_blueprint(auth.bp)
     app.register_blueprint(counter.bp)
     app.register_blueprint(detection.bp)
+    app.register_blueprint(example.bp)
     app.register_blueprint(framework.bp)
     app.register_blueprint(group.bp)
     app.register_blueprint(incident.bp)

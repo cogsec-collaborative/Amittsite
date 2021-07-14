@@ -7,6 +7,7 @@ import pandas as pd
 from amittsite.auth import login_required
 from amittsite.database import db_session
 from amittsite.models import Technique
+from amittsite.models import Example
 from amittsite.models import Tactic
 from amittsite.models import Counter
 from amittsite.models import CounterTechnique
@@ -20,9 +21,10 @@ def get_technique(id, check_author=True):
     technique = Technique.query.join(Tactic).filter(Technique.id == id).first()
     if technique is None:
         abort(404, f"Technique id {id} doesn't exist.")
+    examples = Example.query.filter(Example.object_id == technique.amitt_id).order_by("amitt_id")
     counters = Counter.query.join(CounterTechnique).filter(CounterTechnique.technique_id == technique.amitt_id).order_by("amitt_id")
     detections = Detection.query.join(DetectionTechnique).filter(DetectionTechnique.technique_id == technique.amitt_id).order_by("amitt_id")
-    return (technique, counters, detections)
+    return (technique, examples, counters, detections)
 
 @bp.route('/')
 def index():
@@ -38,10 +40,11 @@ def index():
     return render_template('technique/index.html', techniques=techniques, gridparams=["#redgrid", '#E74C3C', gridarray])
 
 
+
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))
 def view(id):
-    technique, counters, detections = get_technique(id)
-    return render_template('technique/view.html', technique=technique, counters=counters, detections=detections)
+    technique, examples, counters, detections = get_technique(id)
+    return render_template('technique/view.html', technique=technique, examples=examples, counters=counters, detections=detections)
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -71,7 +74,7 @@ def create():
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
-    technique, counters, detections = get_technique(id)
+    technique, examples, counters, detections = get_technique(id)
 
     if request.method == 'POST':
         name = request.form['name']
@@ -96,7 +99,7 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    technique, counters, detections = get_technique(id)
+    technique, examples, counters, detections = get_technique(id)
     db_session.delete(technique)
     db_session.commit()
     return redirect(url_for('technique.index'))

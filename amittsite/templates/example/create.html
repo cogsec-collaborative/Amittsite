@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}New Example{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="name">Name</label>
+    <input name="name" id="name" value="{{ request.form['name'] }}" required>
+    <label for="amitt_id">Amitt id</label>
+    <input name="amitt_id" id="amitt_id" value="{{ request.form['amitt_id'] }}" required>
+    <label for="object_id">Object id</label>
+    <input name="object_id" id="object_id" value="{{ request.form['object_id'] }}" required>
+    <label for="summary">Summary</label>
+    <textarea name="summary" id="summary">{{ request.form['summary'] }}</textarea>
+    <input type="submit" value="Save">
+  </form>
+{% endblock %}
+

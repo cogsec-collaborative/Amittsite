@@ -111,6 +111,25 @@ class Technique(Base):
         return f'<Technique {self.amitt_id!r} {self.name!r}>'
 
 
+class Example(Base):
+    __tablename__ = 'example'
+    id = Column(Integer, primary_key=True)
+    amitt_id = Column(String(20), unique=True)
+    object_id = Column(String(20))
+    name = Column(String(200))
+    summary = Column(Text)
+
+    def __init__(self, amitt_id=None, object_id=None, 
+        name=None, summary=None):
+        self.amitt_id = amitt_id
+        self.object_id = object_id
+        self.name = name
+        self.summary = summary
+
+    def __repr__(self):
+        return f'<Example {self.amitt_id!r} {self.name!r}>'
+
+
 class Counter(Base):
     __tablename__ = 'counter'
     id = Column(Integer, primary_key=True)
