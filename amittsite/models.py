@@ -267,7 +267,24 @@ class DetectionTechnique(Base):
         self.summary = summary
 
     def __repr__(self):
-        return f'<CDetectionTechnique {self.detection_id!r} {self.technique_id!r}>'
+        return f'<DetectionTechnique {self.detection_id!r} {self.technique_id!r}>'
+
+class IncidentTechnique(Base):
+    __tablename__ = 'incident_technique'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(200))
+    incident_id = Column(String(20), ForeignKey('incident.amitt_id'))
+    technique_id = Column(String(20), ForeignKey('technique.amitt_id'))
+    summary = Column(Text)
+
+    def __init__(self, name=None, incident_id=None, technique_id=None, summary=None):
+        self.name = name
+        self.incident_id = incident_id
+        self.technique_id = technique_id
+        self.summary = summary
+
+    def __repr__(self):
+        return f'<IncidentTechnique {self.incident_id!r} {self.technique_id!r}>'
 
 
 class Group(Base):

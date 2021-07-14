@@ -39,7 +39,7 @@ def create_app(test_config=None):
         SECRET_KEY=os.environ.get('SECRET_KEY') or 'dev',
         SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL2'],
     )
-    print('{}'.format(app.config))
+    # print('{}'.format(app.config))
 
     # ensure the instance folder exists
     try:
@@ -64,20 +64,10 @@ def create_app(test_config=None):
 
     @app.route('/textgrid')
     def textgrid():
-        array = [
-          ['TA01', 'TA02', 'TA03', 'TA04', 'TA05', 'TA06', 'TA07', 'TA08', 'TA09', 'TA10', 'TA11', 'TA12'],
-          ['T0001', 'T0005', 'T0007', 'T0010', 'T0016', 'T0019', 'T0029', 'T0039', 'T0047', 'T0057', 'T0058', 'T0062'],
-          ['T0002', 'T0006', 'T0008', 'T0011', 'T0017', 'T0020', 'T0030', 'T0040', 'T0048', 'T0061', 'T0059', 'T0063'],
-          ['T0003', '', 'T0009', 'T0012', 'T0018', 'T0021', 'T0031', 'T0041', 'T0049', '', 'T0060', 'T0064'],
-          ['T0004', '', '', 'T0013', '', 'T0022', 'T0032', 'T0042', 'T0050', '', '', ''],
-          ['', '', '', 'T0014', '', 'T0023', 'T0033', 'T0043', 'T0051', '', '', ''],
-          ['', '', '', 'T0015', '', 'T0024', 'T0034', 'T0044', 'T0052', '', '', ''],
-          ['', '', '', '', '', 'T0025', 'T0035', 'T0045', 'T0053', '', '', ''],
-          ['', '', '', '', '', 'T0026', 'T0036', 'T0046', 'T0054', '', '', ''],
-          ['', '', '', '', '', 'T0027', 'T0037', '', 'T0055', '', '', ''],
-          ['', '', '', '', '', 'T0028', 'T0038', '', 'X0056', '', '', '']
-          ]
-        return render_template('textgrid.html', gridparams=["#redgrid", '#E74C3C', array])#'#E74C3C')
+        (techniques, techgrid, technames) = technique.create_technique_grid()
+        (counters, countergrid, counternames) = counter.create_counter_grid()
+        return render_template('textgrid.html', redgridparams=["#redgrid", '#E74C3C', techgrid, technames],
+            bluegridparams=["#bluegrid", '#4641D6', countergrid, counternames])
 
 
     @app.route('/mapblobs')

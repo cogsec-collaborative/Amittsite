@@ -20,18 +20,28 @@ def get_counter(id, check_author=True):
     techniques = Technique.query.join(CounterTechnique).filter(CounterTechnique.counter_id == counter.amitt_id)
     return (counter, techniques)
 
-
-@bp.route('/')
-def index():
+def create_counter_grid():
     counters = Counter.query.order_by("amitt_id")
+
     # Create grid for clickable visualisation
     df = pd.read_sql(counters.statement, counters.session.bind)
     dflists = df.groupby('tactic_id')['amitt_id'].apply(list).reset_index()
     dfidgrid = pd.DataFrame(dflists['amitt_id'].to_list())
     dfgrid = pd.concat([dflists[['tactic_id']], dfidgrid], axis=1).fillna('')
-    gridarray = [dfgrid[col].to_list() for col in dfgrid.columns]
+    counters_grid = [dfgrid[col].to_list() for col in dfgrid.columns]
 
-    return render_template('counter/index.html', counters=counters, gridparams=["#bluegrid", '#4641D6', gridarray])
+    # Create dict for use in visualisation and list updates
+    df.index = df.amitt_id
+    counter_names = df[['name']].transpose().to_dict('records')[0]
+
+    return counters, counters_grid, counter_names
+
+
+@bp.route('/')
+def index():
+    counters, countgrid, countnames = create_counter_grid()
+    return render_template('counter/index.html', counters=counters, 
+        gridparams=["#bluegrid", '#4641D6', countgrid, countnames])
 
 
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))

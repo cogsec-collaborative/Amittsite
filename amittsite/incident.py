@@ -6,15 +6,19 @@ from werkzeug.exceptions import abort
 from amittsite.auth import login_required
 from amittsite.database import db_session
 from amittsite.models import Incident
+from amittsite.models import IncidentTechnique
 
 
 bp = Blueprint('incident', __name__, url_prefix='/incident')
+
+# FIXIT: add a routine get_incident_minimal that only gets basic incident data, not cross-table stuff
 
 def get_incident(id, check_author=True):
     incident = Incident.query.filter(Incident.id == id).first()
     if incident is None:
         abort(404, f"Incident id {id} doesn't exist.")
-    return incident
+    techniques = IncidentTechnique.query.filter(IncidentTechnique.incident_id == incident.amitt_id).order_by("technique_id")
+    return incident, techniques
 
 
 @bp.route('/')
@@ -25,8 +29,8 @@ def index():
 
 @bp.route('/<int:id>/view', methods=('GET', 'POST'))
 def view(id):
-    incident = get_incident(id)
-    return render_template('incident/view.html', incident=incident)
+    incident, techniques = get_incident(id)
+    return render_template('incident/view.html', incident=incident, techniques=techniques)
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -56,7 +60,7 @@ def create():
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
-    incident = get_incident(id)
+    incident, techniques = get_incident(id)
 
     if request.method == 'POST':
         name = request.form['name']
@@ -81,7 +85,7 @@ def update(id):
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    incident = get_incident(id)
+    incident, techniques = get_incident(id)
     db_session.delete(incident)
     db_session.commit()            
     return redirect(url_for('incident.index'))

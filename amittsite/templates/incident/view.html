@@ -6,12 +6,25 @@
 
 {% block content %}
 
-<p class="objecttype">Object type: {{ incident.objecttype }}</p>
-<p class="year_started">Year started: {{ incident.year_started }}</p>
-<p class="attributions_seen">Attributions seen: {{ incident.attributions_seen }}</p>
-<p class="found_in_country">Found in country: {{ incident.found_in_country }}</p>
+<p class="details">
+<ul>
+<li>Object type: {{ incident.objecttype }}</li>
+<li>Year started: {{ incident.year_started }}</li>
+<li>Found in country: {{ incident.found_in_country }}</li>
+<li>Attributions seen: {{ incident.attributions_seen }}</li>
+</ul>
 <p class="summary">Summary: {{ incident.summary }}</p>
-
 <p class="actions"><a class="action" href="{{ url_for('incident.update', id=incident.id) }}">Edit</a></p>
+
+<hr>
+<h3>Relationships</h3>
+<p class="techniques">Uses techniques: 
+  <ul>
+    {% for technique in techniques %}
+      <div class="technique"><li><strong>{{ technique.technique_id }}</strong> as {{ technique.name }}: {{ technique.summary }}</li></div>
+    {% endfor %}
+  </ul>
+</p>
+
 {% endblock %}
 
