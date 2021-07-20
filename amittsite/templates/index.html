@@ -26,6 +26,7 @@ Framework objects:
     <li><a class="detection" href="{{ url_for('detection.index') }}">Detections</a></li>
     <li><a class="responsetype" href="{{ url_for('responsetype.index') }}">Responsetypes</a></li>
     <li><a class="metatechnique" href="{{ url_for('metatechnique.index') }}">Metatechniques</a></li>
+    <li><a class="playbook" href="{{ url_for('playbook.index') }}">Playbooks</a></li>
     <li><a class="resource" href="{{ url_for('resource.index') }}">Resources</a></li>
     <!-- Add: actortypes,  -->
 </ul>
@@ -37,6 +38,25 @@ Datasets:
     <li><a class="group" href="{{ url_for('group.index') }}">Groups</a></li>
     <li><a class="tool" href="{{ url_for('tool.index') }}">Tools</a></li>
 </ul>
+<hr>
+</div>
+
+<div>
+<h3> What you're looking at here</h3>
+
+<p>You're looking at a work in progress. Eventually this message will be replaced with a pretty interface, but if you're here, it's good to say what's happening to get there.</p>  
+
+<p>We're working towards a set of functions for this app that include navigating a database of disinformation objects, being able to easily enter machine- and human-readable descriptions of misinformation and disinformation incidents, traverse through possibel behaviours as part of a red team exercise or simulation, and share machine-readable alerts with anyone connected to a information security system using the STIX message protocols. </p>
+
+<p>But to get there, we have to do some things first.  These include:
+  <ul>
+    <li>Transfer all the AMITT framework objects in our master repository into a SQL database format (actually two - SQLite and Postgresql), formalising all the objects that were implicit in it (like playbooks), and normalising all the relationships between them.  We're on this now</li>
+    <li>Making all those database objects visible in here, so a priviledged user can create, view, update and delete them - and a non-priviledged user can view all the objects, and suggest new objects, updates, and deletions. Also working on this</li>
+    <li>Separate data objects from framework objects.  What this means in practice is that the framework objects are the ways you describe an incident - standards for things like incidents, actors, behaviours, artifacts; data objects are instances of these, e.g. the Blacktivist incident and the behaviour and artifacts seen in it. This part is done.</li>
+    <li>Put all the AMITT standards and datasets into one place.  We have ATT&CK-based standards, STIX-based standards, lists of groups, tools, examples, references etc; we also have a set of MISP disinformation data standards for low-level objects like images and social media posts / groups.  We're putting them all in here, and making sure they line up</li>
+    <li>Build more user-friendly interfaces for entering things like disinformation situation reports quickly. You can see the visual components of these if you look at the techniques and countermeasures objects - and there's a hidden page /textgrid that we're testing out interface types in (there's also a map interface, but that's going to take a while. </li>
+    <li>Build connectors to tools like MISP - we already have AMITT frameworks embedded in it, and it would be useful to be able to send flash alerts about disinformation without filling in a *lot* of data fields</li>
+  </ul>
 
   </div>
 {% endblock %}

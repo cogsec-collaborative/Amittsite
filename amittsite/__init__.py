@@ -15,6 +15,7 @@ from . import group
 from . import incident
 from . import metatechnique
 from . import phase
+from . import playbook
 from . import resource
 from . import responsetype
 from . import tactic
@@ -93,6 +94,7 @@ def create_app(test_config=None):
     app.register_blueprint(incident.bp)
     app.register_blueprint(metatechnique.bp)
     app.register_blueprint(phase.bp)
+    app.register_blueprint(playbook.bp)
     app.register_blueprint(resource.bp)
     app.register_blueprint(responsetype.bp)
     app.register_blueprint(tactic.bp)
